@@ -1,6 +1,7 @@
 import React from "react";
 import { Navbar, Container } from "react-bootstrap";
 import "../css/Header.css";
+import { ReactComponent as Logo } from "../Images/logo.svg";
 
 const Header = ({ title }) => {
   return (
@@ -10,7 +11,7 @@ const Header = ({ title }) => {
       variant={undefined}
     >
       <Container className="justify-content-center">
-        <Navbar.Brand href="/">{title}</Navbar.Brand>
+        <Logo alt={title} style={{ maxWidth: "30rem", maxHeight: "4rem" }} />
       </Container>
     </Navbar>
   );

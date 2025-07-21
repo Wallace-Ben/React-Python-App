@@ -4,21 +4,21 @@ import Search from "./components/Search";
 import ImageCard from "./components/ImageCard";
 import { useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
+import Welcome from "./components/Welcome";
 
-const UNSPLASH_KEY = process.env.REACT_APP_UNSPLASH_API_KEY;
-const UNSPLASH_BASE_URL = `https://api.unsplash.com/photos/random/`;
+const API_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:5050";
 
 function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [images, setImages] = useState([]);
 
-  const queryString = `?query=${searchTerm}&client_id=${UNSPLASH_KEY}`;
+  const queryString = `/new-image?query=${searchTerm}`;
 
   async function searchImageHandler(e) {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${UNSPLASH_BASE_URL}${queryString}`);
+      const response = await fetch(`${API_URL}${queryString}`);
       const data = await response.json();
       setImages([{ ...data, title: searchTerm }, ...images]);
       console.log(images);
@@ -41,15 +41,19 @@ function App() {
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
       />
-      <Container className="mt-4">
-        <Row xs={1} md={2} lg={3}>
-          {images.map((image, i) => (
-            <Col key={i}>
-              <ImageCard image={image} onDelete={deleteImageHandler} />
-            </Col>
-          ))}
-        </Row>
-      </Container>
+      {images.length > 0 ? (
+        <Container className="mt-4">
+          <Row xs={1} md={2} lg={3}>
+            {images.map((image, i) => (
+              <Col key={i}>
+                <ImageCard image={image} onDelete={deleteImageHandler} />
+              </Col>
+            ))}
+          </Row>
+        </Container>
+      ) : (
+        <Welcome />
+      )}
     </div>
   );
 }
