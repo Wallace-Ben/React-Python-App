@@ -1,14 +1,13 @@
-FROM node:latest
+FROM node:20-bullseye
 
 WORKDIR /app
-
 EXPOSE 3000
 
-COPY package.json package-lock.json ./
+COPY package*.json ./
+RUN npm ci --quiet || npm install --quiet
 
-RUN npm install --silent
+COPY . .
 
-COPY . ./
+ENV HOST=0.0.0.0
 
 CMD ["npm", "start"]
-
