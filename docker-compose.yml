@@ -23,3 +23,6 @@ services:
     container_name: image-gallery-api
     ports:
       - "5050:5050"
+    volumes:
+      - ./images-gallery/api:/app
+      - /app/node_modules
