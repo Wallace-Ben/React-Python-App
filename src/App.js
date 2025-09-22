@@ -1,4 +1,5 @@
 import "bootstrap/dist/css/bootstrap.min.css";
+import axios from "axios";
 import Header from "./components/Header";
 import Search from "./components/Search";
 import ImageCard from "./components/ImageCard";
@@ -18,12 +19,10 @@ function App() {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${API_URL}${queryString}`);
-      const data = await response.json();
-      setImages([{ ...data, title: searchTerm }, ...images]);
-      console.log(images);
-    } catch (err) {
-      console.log(err);
+      const res = await axios.get(`${API_URL}${queryString}`);
+      setImages([{ ...res.data, title: searchTerm }, ...images]);
+    } catch (error) {
+      console.log(error);
     }
 
     setSearchTerm("");
