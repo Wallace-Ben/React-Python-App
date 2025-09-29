@@ -17,7 +17,7 @@ const ImageCard = ({ image, onDelete }) => {
     return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
   }
 
-  const title = toTitleCase(image.title);
+  const title = toTitleCase(image?.title || "");
   const description = capitaliseSentence(
     image.description || image.alt_description
   );
