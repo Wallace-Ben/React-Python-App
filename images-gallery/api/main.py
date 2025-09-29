@@ -44,6 +44,7 @@ def images():
         result = []
         for img in images:
             img["id"] = str(img["_id"])  # This is important!
+            del img["_id"]
             result.append(img)
         return jsonify(result)
     if request.method == "POST":
