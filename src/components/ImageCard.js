@@ -2,7 +2,7 @@ import React from "react";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 
-const ImageCard = ({ image, onDelete }) => {
+const ImageCard = ({ image, onDelete, saveImage }) => {
   function toTitleCase(str) {
     return str
       .toLowerCase()
@@ -22,15 +22,30 @@ const ImageCard = ({ image, onDelete }) => {
     image.description || image.alt_description
   );
 
+  const savedStyle = !image.saved
+    ? {
+        display: "flex",
+        justifyContent: "space-between",
+        marginLeft: "50px",
+        marginRight: "50px",
+      }
+    : undefined;
   return (
-    <Card style={{ width: "18rem" }}>
+    <Card style={{ width: "18rem", textAlign: "center" }}>
       <Card.Img variant="top" src={image.urls.small} />
       <Card.Body>
         <Card.Title>{title}</Card.Title>
         <Card.Text>{description}</Card.Text>
-        <Button variant="primary" onClick={() => onDelete(image.id)}>
-          Delete Image
-        </Button>
+        <div style={savedStyle}>
+          <Button variant="primary" onClick={() => onDelete(image.id)}>
+            Delete
+          </Button>
+          {!image.saved && (
+            <Button variant="secondary" onClick={() => saveImage(image.id)}>
+              Save
+            </Button>
+          )}
+        </div>
       </Card.Body>
     </Card>
   );
