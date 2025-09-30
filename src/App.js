@@ -9,10 +9,25 @@ import Welcome from "./components/Welcome";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:5050";
 
+/**
+ * Main application component for the Images Gallery.
+ * Manages state for search term and images, handles image search, save, and delete operations.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered App component.
+ */
 function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [images, setImages] = useState([]);
 
+  /**
+   * Fetches saved images from the backend API and updates the images state.
+   * Handles errors by logging them to the console.
+   *
+   * @async
+   * @function getSavedImages
+   * @returns {Promise<void>}
+   */
   const getSavedImages = async () => {
     try {
       const res = await axios.get(`${API_URL}/images`);
@@ -22,6 +37,15 @@ function App() {
     }
   };
 
+  /**
+   * Saves an image by its ID to the backend API and updates its saved status in state.
+   * Handles errors by logging them to the console.
+   *
+   * @async
+   * @function handleSaveImage
+   * @param {string|number} id - The ID of the image to be saved.
+   * @returns {Promise<void>}
+   */
   const handleSaveImage = async (id) => {
     const imageToBeSaved = images.find((image) => image.id === id);
     imageToBeSaved.saved = true;
@@ -48,6 +72,16 @@ function App() {
 
   const queryString = `/new-image?query=${searchTerm}`;
 
+  /**
+   * Handles the search form submission, fetches a new image based on the search term,
+   * and adds it to the images state.
+   * Handles errors by logging them to the console.
+   *
+   * @async
+   * @function searchImageHandler
+   * @param {React.FormEvent} e - The form submission event.
+   * @returns {Promise<void>}
+   */
   async function searchImageHandler(e) {
     e.preventDefault();
 
@@ -61,6 +95,13 @@ function App() {
     setSearchTerm("");
   }
 
+  /**
+   * Deletes an image from the images state by its ID.
+   *
+   * @function deleteImageHandler
+   * @param {string|number} id - The ID of the image to be deleted.
+   * @returns {void}
+   */
   function deleteImageHandler(id) {
     setImages(images.filter((image) => image.id !== id));
   }
