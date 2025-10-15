@@ -1,0 +1,19 @@
+{
+  "python.defaultInterpreterPath": "api/.venv/Scripts/python.exe",
+
+  // ✅ Use Black for formatting
+  "python.formatting.provider": "black",
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true
+  },
+
+  // ✅ Autoformat on save globally
+  "editor.formatOnSave": true,
+
+  // ✅ Enable pylint alongside Pylance
+  "python.linting.pylintPath": "api/.venv/Scripts/pylint.exe",
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": true,
+  "python.linting.lintOnSave": true
+}
