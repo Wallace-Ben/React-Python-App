@@ -4,6 +4,8 @@ import requests
 from dotenv import load_dotenv
 from flask_cors import CORS
 from mongo_client import mongo_client
+from bson import ObjectId
+
 
 gallery = mongo_client.gallery
 images_collection = gallery.images
@@ -52,6 +54,18 @@ def images():
         image = request.get_json()
         result = images_collection.insert_one(image)
         return jsonify({"id": str(result.inserted_id)}), 201
+
+
+@app.route("/images/<image_id>", methods=["DELETE"])
+def image(image_id):
+    # Delete image from database
+    result = images_collection.delete_one({"_id": ObjectId(image_id)})
+    if not result:
+        return {"error": "Image wasn't deleted. Please try again"}, 500
+    if result and not result.deleted_count:
+        return {"error": "Image not found"}, 404
+
+    return jsonify({"deleted_id": image_id}), 200
 
 
 if __name__ == "__main__":
