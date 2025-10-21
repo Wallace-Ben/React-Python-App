@@ -53,7 +53,11 @@ function App() {
 
       if (res.data?.id) {
         setImages((prev) =>
-          prev.map((img) => (img.id === id ? { ...img, saved: true } : img))
+          prev.map((img) =>
+            img.id === id
+              ? { ...img, id: res.data.id, saved: true } // ✅ update id to Mongo ID
+              : img
+          )
         );
       }
     } catch (error) {
@@ -100,8 +104,22 @@ function App() {
    * @param {string|number} id - The ID of the image to be deleted.
    * @returns {void}
    */
-  function deleteImageHandler(id) {
-    setImages(images.filter((image) => image.id !== id));
+  async function deleteImageHandler(id) {
+    const image = images.find((img) => img.id === id);
+
+    // If image isn't saved yet, just remove from frontend
+    if (!image?.saved) {
+      setImages((prev) => prev.filter((img) => img.id !== id));
+      return;
+    }
+
+    // Otherwise delete from DB
+    try {
+      await axios.delete(`${API_URL}/images/${id}`);
+      setImages((prev) => prev.filter((img) => img.id !== id));
+    } catch (error) {
+      console.error("Failed to delete image:", error);
+    }
   }
 
   return (
