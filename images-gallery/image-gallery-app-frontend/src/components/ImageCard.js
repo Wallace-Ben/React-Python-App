@@ -64,6 +64,26 @@ const ImageCard = ({ image, onDelete, saveImage }) => {
           )}
         </div>
       </Card.Body>
+      <Card.Footer className="text-muted">
+        {image.user && image.user.name ? (
+          <>
+            Photo by{" "}
+            {image.user.portfolio_url ? (
+              <Card.Link
+                href={image.user.portfolio_url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {image.user.name}
+              </Card.Link>
+            ) : (
+              <span>{image.user.name}</span>
+            )}
+          </>
+        ) : (
+          <span>No author name</span>
+        )}
+      </Card.Footer>
     </Card>
   );
 };
