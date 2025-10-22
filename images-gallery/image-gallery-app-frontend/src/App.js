@@ -7,6 +7,8 @@ import { useState, useEffect } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import Welcome from "./components/Welcome";
 import Spinner from "./components/Spinner";
+import { ToastContainer, toast, Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:5050";
 
@@ -40,6 +42,24 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    async function fetchImages() {
+      await getSavedImages();
+    }
+    fetchImages();
+    toast.success("📸 Your saved images are ready!", {
+      position: "bottom-right",
+      autoClose: 4000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Bounce,
+    });
+  }, []);
+
   /**
    * Saves an image by its ID to the backend API and updates its saved status in state.
    * Handles errors by logging them to the console.
@@ -63,17 +83,21 @@ function App() {
           )
         );
       }
+      toast.success("💾 Image saved to your gallery", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     } catch (error) {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    async function fetchImages() {
-      await getSavedImages();
-    }
-    fetchImages();
-  }, []);
 
   const queryString = `/new-image?query=${searchTerm}`;
 
@@ -120,6 +144,17 @@ function App() {
     try {
       await axios.delete(`${API_URL}/images/${id}`);
       setImages((prev) => prev.filter((img) => img.id !== id));
+      toast.success(`🗑️ Image removed from your gallery.`, {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     } catch (error) {
       console.error("Failed to delete image:", error);
     }
@@ -156,6 +191,19 @@ function App() {
           )}
         </>
       )}
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
     </div>
   );
 }
