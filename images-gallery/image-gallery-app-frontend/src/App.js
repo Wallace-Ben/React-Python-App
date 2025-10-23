@@ -9,6 +9,7 @@ import Welcome from "./components/Welcome";
 import Spinner from "./components/Spinner";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import showToast from "./components/ToastNotification";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://127.0.0.1:5050";
 
@@ -37,27 +38,17 @@ function App() {
       const res = await axios.get(`${API_URL}/images`);
       setImages(res.data || []);
       setLoading(false);
+      if (res.data.length > 0) {
+        showToast("success", "📸 Your saved images are ready!"); // Due to Strict Mode in index.js, useEffect is run twice, leading to two notifications showing, this won't be the case in production
+      }
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching saved images:", error);
+      showToast("error", error.message);
     }
   };
 
   useEffect(() => {
-    async function fetchImages() {
-      await getSavedImages();
-    }
-    fetchImages();
-    toast.success("📸 Your saved images are ready!", {
-      position: "bottom-right",
-      autoClose: 4000,
-      hideProgressBar: false,
-      closeOnClick: false,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-      transition: Bounce,
-    });
+    getSavedImages();
   }, []);
 
   /**
@@ -83,19 +74,10 @@ function App() {
           )
         );
       }
-      toast.success("💾 Image saved to your gallery", {
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
+      showToast("info", "💾 Image saved.");
     } catch (error) {
-      console.log(error);
+      console.error("Error saving image:", error);
+      showToast("error", error.message);
     }
   };
 
@@ -118,7 +100,8 @@ function App() {
       const res = await axios.get(`${API_URL}${queryString}`);
       setImages([{ ...res.data, title: searchTerm }, ...images]);
     } catch (error) {
-      console.log(error);
+      console.error("Error searching for image:", error);
+      showToast("error", error.message);
     }
 
     setSearchTerm("");
@@ -137,6 +120,7 @@ function App() {
     // If image isn't saved yet, just remove from frontend
     if (!image?.saved) {
       setImages((prev) => prev.filter((img) => img.id !== id));
+      showToast("info", "🗑️ Image removed");
       return;
     }
 
@@ -144,19 +128,10 @@ function App() {
     try {
       await axios.delete(`${API_URL}/images/${id}`);
       setImages((prev) => prev.filter((img) => img.id !== id));
-      toast.success(`🗑️ Image removed from your gallery.`, {
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
+      showToast("warning", "🗑️ Image deleted.");
     } catch (error) {
-      console.error("Failed to delete image:", error);
+      console.error("Error deleting image:", error);
+      showToast("error", error.message);
     }
   }
 
@@ -176,7 +151,7 @@ function App() {
             <Container className="mt-4">
               <Row xs={1} md={2} lg={3}>
                 {images.map((image, i) => (
-                  <Col key={i}>
+                  <Col key={image.id || i}>
                     <ImageCard
                       image={image}
                       onDelete={deleteImageHandler}
